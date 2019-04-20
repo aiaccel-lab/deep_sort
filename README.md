@@ -1,9 +1,7 @@
 # Deep SORT
 
 ## Introduction
-
-This repository contains code for *Simple Online and Realtime Tracking with a Deep Association Metric* (Deep SORT).
-[SORT](https://github.com/abewley/sort) 확장판
+[SORT](https://github.com/abewley/sort) 확장판 입니다.
 SORT 논문 : [arXiv preprint](https://arxiv.org/abs/1703.07402) 
 
 ## Dependencies
@@ -38,9 +36,8 @@ neural network (see below).
 
 ## Running the tracker
 
-The following example starts the tracker on one of the
-[MOT16 benchmark](https://motchallenge.net/data/MOT16/)
-sequences.
+[MOT16 benchmark](https://motchallenge.net/data/MOT16/)를 예시로 실행시키는 방법(영상을 받아올수 있는 좋은 사이트입니다.)
+
 We assume resources have been extracted to the repository root directory and
 the MOT16 benchmark data is in `./MOT16`:
 ```
@@ -51,9 +48,8 @@ python deep_sort_app.py \
     --nn_budget=100 \
     --display=True
 ```
-Check `python deep_sort_app.py -h` for an overview of available options.
-There are also scripts in the repository to visualize results, generate videos,
-and evaluate the MOT challenge benchmark.
+`python deep_sort_app.py -h` 이용가능한 옵션을 체크하자
+또한 저장소안에는 평가하기,시각화하기,비디오 생성하는 코드도 있다.
 
 ## Generating detections
 
@@ -100,8 +96,7 @@ This file runs the tracker on a MOTChallenge sequence.
 In package `deep_sort` is the main tracking code:
 
 * `detection.py`: Detection base class.
-* `kalman_filter.py`: A Kalman filter implementation and concrete
-   parametrization for image space filtering.
+* `kalman_filter.py`: kalman filter 구현, 영상 이미지 공간 필터링을위한 구체적인 매개 변수화.
 * `linear_assignment.py`: This module contains code for min cost matching and
    the matching cascade.
 * `iou_matching.py`: This module contains the IOU matching metric.
