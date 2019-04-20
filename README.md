@@ -3,9 +3,8 @@
 ## Introduction
 
 This repository contains code for *Simple Online and Realtime Tracking with a Deep Association Metric* (Deep SORT).
-We extend the original [SORT](https://github.com/abewley/sort) algorithm to
-integrate appearance information based on a deep appearance descriptor.
-See the [arXiv preprint](https://arxiv.org/abs/1703.07402) for more information.
+[SORT](https://github.com/abewley/sort) 확장판
+SORT 논문 : [arXiv preprint](https://arxiv.org/abs/1703.07402) 
 
 ## Dependencies
 
