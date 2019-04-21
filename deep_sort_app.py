@@ -40,33 +40,38 @@ def gather_sequence_info(sequence_dir, detection_file):
         * max_frame_idx: Index of the last frame.
 
     """
+    # 이미지 경로
     image_dir = os.path.join(sequence_dir, "img1")
+    # 파일이름
     image_filenames = {
         int(os.path.splitext(f)[0]): os.path.join(image_dir, f)
         for f in os.listdir(image_dir)}
+    # 실제값
     groundtruth_file = os.path.join(sequence_dir, "gt/gt.txt")
 
     detections = None
+    # 검출 파일 불러오기
     if detection_file is not None:
         detections = np.load(detection_file)
     groundtruth = None
+    # 실제값 불러오기
     if os.path.exists(groundtruth_file):
         groundtruth = np.loadtxt(groundtruth_file, delimiter=',')
-
+    # 시퀀스 이미지 읽기
     if len(image_filenames) > 0:
         image = cv2.imread(next(iter(image_filenames.values())),
                            cv2.IMREAD_GRAYSCALE)
         image_size = image.shape
     else:
         image_size = None
-
+    # index
     if len(image_filenames) > 0:
         min_frame_idx = min(image_filenames.keys())
         max_frame_idx = max(image_filenames.keys())
     else:
         min_frame_idx = int(detections[:, 0].min())
         max_frame_idx = int(detections[:, 0].max())
-
+    # 시퀀스 정보
     info_filename = os.path.join(sequence_dir, "seqinfo.ini")
     if os.path.exists(info_filename):
         with open(info_filename, "r") as f:
@@ -134,9 +139,9 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     Parameters
     ----------
     sequence_dir : str
-        Path to the MOTChallenge sequence directory.
+        시퀀스 데이터 경로
     detection_file : str
-        Path to the detections file.
+        검출 파일
     output_file : str
         Path to the tracking output file. This file will contain the tracking
         results on completion.
@@ -231,7 +236,7 @@ def parse_args():
     parser.add_argument(
         "--output_file", help="Path to the tracking output file. This file will"
         " contain the tracking results on completion.",
-        default="/tmp/hypotheses.txt")
+        default="./tmp/hypotheses.txt")
     parser.add_argument(
         "--min_confidence", help="Detection confidence threshold. Disregard "
         "all detections that have a confidence lower than this value.",
