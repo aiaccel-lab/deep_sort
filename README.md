@@ -32,6 +32,8 @@ Limited, 2016.
 
 [MOT16 benchmark](https://motchallenge.net/data/MOT16/)를 예시로 실행시키는 방법(영상을 받아올수 있는 좋은 사이트입니다.)
 
+- **위에 사이트 맨아래 데이터 셋 받아서 해야합니다.**
+
 ```
 python deep_sort_app.py \
     --sequence_dir=./MOT16/test/MOT16-06 \
