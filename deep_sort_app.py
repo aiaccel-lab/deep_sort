@@ -15,30 +15,27 @@ from deep_sort.tracker import Tracker
 
 
 def gather_sequence_info(sequence_dir, detection_file):
-    """Gather sequence information, such as image filenames, detections,
-    groundtruth (if available).
-
+    """
+    시퀀스의 정보를 수집하는 함수
+    
     Parameters
     ----------
     sequence_dir : str
-        Path to the MOTChallenge sequence directory.
+        MOTChallenge sequence directory 경로
     detection_file : str
-        Path to the detection file.
-
+        detection file 경로
+        
     Returns
     -------
-    Dict
-        A dictionary of the following sequence information:
+    디렉토리의 시퀀스 정보:
 
-        * sequence_name: Name of the sequence
-        * image_filenames: A dictionary that maps frame indices to image
-          filenames.
-        * detections: A numpy array of detections in MOTChallenge format.
-        * groundtruth: A numpy array of ground truth in MOTChallenge format.
-        * image_size: Image size (height, width).
-        * min_frame_idx: Index of the first frame.
-        * max_frame_idx: Index of the last frame.
-
+    * sequence_name: 시퀀스 이름
+    * image_filenames: 파일 이름
+    * detections: MOTChallenge 형식의 검출 파일
+    * groundtruth: MOTChallenge 형식의 groud-truth
+    * image_size: Image size (height, width).
+    * min_frame_idx: 첫번째 인덱스의 이름
+    * max_frame_idx: 마지막 인덱스의 이름
     """
     # 이미지 경로
     image_dir = os.path.join(sequence_dir, "img1")
@@ -71,6 +68,7 @@ def gather_sequence_info(sequence_dir, detection_file):
     else:
         min_frame_idx = int(detections[:, 0].min())
         max_frame_idx = int(detections[:, 0].max())
+        
     # 시퀀스 정보
     info_filename = os.path.join(sequence_dir, "seqinfo.ini")
     if os.path.exists(info_filename):
@@ -134,7 +132,8 @@ def create_detections(detection_mat, frame_idx, min_height=0):
 def run(sequence_dir, detection_file, output_file, min_confidence,
         nms_max_overlap, min_detection_height, max_cosine_distance,
         nn_budget, display):
-    """Run multi-target tracker on a particular sequence.
+    """
+    multi-target tracker 실행
 
     Parameters
     ----------
@@ -143,31 +142,30 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     detection_file : str
         검출 파일
     output_file : str
-        Path to the tracking output file. This file will contain the tracking
-        results on completion.
+        output file 경로 / 추적 결과를 포함
     min_confidence : float
-        Detection confidence threshold. Disregard all detections that have
-        a confidence lower than this value.
+        confidence 임계값 / 이보다 낮은 confidence는 무시하게 된다.
     nms_max_overlap: float
-        Maximum detection overlap (non-maxima suppression threshold).
+        Maximum detection overlap (NMS 임계값)
     min_detection_height : int
-        Detection height threshold. Disregard all detections that have
-        a height lower than this value.
+        height 임계값 / 이보다 낮은 height는 무시하게 된다.
     max_cosine_distance : float
-        Gating threshold for cosine distance metric (object appearance).
+        cosine distance metric 임계값
     nn_budget : Optional[int]
-        Maximum size of the appearance descriptor gallery. If None, no budget
-        is enforced.
+        Maximum size of the appearance descriptor gallery. If None, no budget is enforced.
     display : bool
-        If True, show visualization of intermediate tracking results.
+        True : 시각화
 
     """
+    # 시퀀스 정보수
     seq_info = gather_sequence_info(sequence_dir, detection_file)
+    # cosine distance metric 사용
     metric = nn_matching.NearestNeighborDistanceMetric(
         "cosine", max_cosine_distance, nn_budget)
     tracker = Tracker(metric)
     results = []
 
+    # 프레임 마다 호출
     def frame_callback(vis, frame_idx):
         print("Processing frame %05d" % frame_idx)
 

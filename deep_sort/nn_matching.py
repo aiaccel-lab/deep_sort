@@ -9,14 +9,13 @@ import numpy as np
 
 
 def _pdist(a, b):
-    """Compute pair-wise squared distance between points in `a` and `b`.
+    """
+    점과 점사이의 제곱 - 제곱 거리 계
 
     Parameters
     ----------
-    a : array_like
-        An NxM matrix of N samples of dimensionality M.
-    b : array_like
-        An LxM matrix of L samples of dimensionality M.
+    a : An NxM matrix of N samples of dimensionality M.
+    b : An LxM matrix of L samples of dimensionality M.
 
     Returns
     -------
@@ -35,7 +34,8 @@ def _pdist(a, b):
 
 
 def _cosine_distance(a, b, data_is_normalized=False):
-    """Compute pair-wise cosine distance between points in `a` and `b`.
+    """
+    점과 점 사이의 cosine distance 계산
 
     Parameters
     ----------
@@ -82,14 +82,14 @@ def _nn_euclidean_distance(x, y):
 
 
 def _nn_cosine_distance(x, y):
-    """ Helper function for nearest neighbor distance metric (cosine).
-
+    """ 
+    Helper function for nearest neighbor distance metric (cosine).
+    최근접 거리 cosine metric 헬퍼 함수
+    
     Parameters
     ----------
-    x : ndarray
-        A matrix of N row-vectors (sample points).
-    y : ndarray
-        A matrix of M row-vectors (query points).
+    x : A matrix of N row-vectors (sample points).
+    y : A matrix of M row-vectors (query points).
 
     Returns
     -------
@@ -104,26 +104,19 @@ def _nn_cosine_distance(x, y):
 
 class NearestNeighborDistanceMetric(object):
     """
-    A nearest neighbor distance metric that, for each target, returns
-    the closest distance to any sample that has been observed so far.
-
+    각 target에 대해 지금까지 관측된 샘플에 가장 가까운
+    거리를 반환하는 nearest neighbor distance metric 
+   
     Parameters
     ----------
-    metric : str
-        Either "euclidean" or "cosine".
-    matching_threshold: float
-        The matching threshold. Samples with larger distance are considered an
-        invalid match.
-    budget : Optional[int]
-        If not None, fix samples per class to at most this number. Removes
-        the oldest samples when the budget is reached.
+    metric : "euclidean" , "cosine".
+    matching_threshold: 일치하는 임계값 / 거리가 더 크면 잘못된 것으로 탐지
+    budget : class당 샘플을 budget 이하로 수정 / 가장 오래된 샘플을 제거
 
     Attributes
     ----------
     samples : Dict[int -> List[ndarray]]
-        A dictionary that maps from target identities to the list of samples
-        that have been observed so far.
-
+        target id에서 지금까지 관찰된 샘플 목록으로 매핑 
     """
 
     def __init__(self, metric, matching_threshold, budget=None):
