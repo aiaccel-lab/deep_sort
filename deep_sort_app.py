@@ -97,30 +97,29 @@ def gather_sequence_info(sequence_dir, detection_file):
 
 
 def create_detections(detection_mat, frame_idx, min_height=0):
-    """Create detections for given frame index from the raw detection matrix.
+    """
+    주어진 프레임에 대한 detection을 만들기
 
     Parameters
     ----------
     detection_mat : ndarray
-        Matrix of detections. The first 10 columns of the detection matrix are
-        in the standard MOTChallenge detection format. In the remaining columns
-        store the feature vector associated with each detection.
+        detection matric은 처음 10개 열은 MOTChallenge 형식이고
+        나머지 열은 각 detection과 연관된 벡터가 저장된다.
     frame_idx : int
-        The frame index.
+        프레임 인덱스
     min_height : Optional[int]
-        A minimum detection bounding box height. Detections that are smaller
-        than this value are disregarded.
-
+        최소 bounding box 높이 / 이것보다 작으면 무시한다.
     Returns
     -------
     List[tracker.Detection]
-        Returns detection responses at given frame index.
+        detection 반환
 
     """
     frame_indices = detection_mat[:, 0].astype(np.int)
     mask = frame_indices == frame_idx
 
     detection_list = []
+    # detection parsing
     for row in detection_mat[mask]:
         bbox, confidence, feature = row[2:6], row[6], row[10:]
         if bbox[3] < min_height:
@@ -169,23 +168,25 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     def frame_callback(vis, frame_idx):
         print("Processing frame %05d" % frame_idx)
 
-        # Load image and generate detections.
+        # detection 생성
         detections = create_detections(
             seq_info["detections"], frame_idx, min_detection_height)
         detections = [d for d in detections if d.confidence >= min_confidence]
 
-        # Run non-maxima suppression.
+        # NMS 실행
         boxes = np.array([d.tlwh for d in detections])
         scores = np.array([d.confidence for d in detections])
         indices = preprocessing.non_max_suppression(
             boxes, nms_max_overlap, scores)
         detections = [detections[i] for i in indices]
 
-        # Update tracker.
+        # tracker 업데이트 이 부분에서 detection을 업데이트 해서 객체를 추적한다.
+        # 내가 내 코드에 결합하고 싶을 때 사용하는 방법을 이해하기 위해 포스트를 작성했기 떄문에
+        # 자세하게 보고싶으면 SORT 포스트를 보자 비슷한거 같다.
         tracker.predict()
         tracker.update(detections)
 
-        # Update visualization.
+        # 시각화
         if display:
             image = cv2.imread(
                 seq_info["image_filenames"][frame_idx], cv2.IMREAD_COLOR)
@@ -193,7 +194,7 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
             vis.draw_detections(detections)
             vis.draw_trackers(tracker.tracks)
 
-        # Store results.
+        # 결과를 저장한다.
         for track in tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
@@ -201,14 +202,14 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
             results.append([
                 frame_idx, track.track_id, bbox[0], bbox[1], bbox[2], bbox[3]])
 
-    # Run tracker.
+    # 객체를 추적하는 시작부분 frame_callback을 매 프레임 호출한다.
     if display:
         visualizer = visualization.Visualization(seq_info, update_ms=5)
     else:
         visualizer = visualization.NoVisualization(seq_info)
     visualizer.run(frame_callback)
 
-    # Store results.
+    # 결과를 저장한다.
     f = open(output_file, 'w')
     for row in results:
         print('%d,%d,%.2f,%.2f,%.2f,%.2f,1,-1,-1,-1' % (
